@@ -47,6 +47,9 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
+# Local environment
+/.env
+
 # Local PCI contest documents and agent instructions
 /PCI - Pełna treść zadania konkursowego.pdf
 /PCI -Regulamin zadania konkursowego.pdf
