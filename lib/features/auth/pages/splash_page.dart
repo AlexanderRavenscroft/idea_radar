@@ -2,8 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:idea_radar/app/session/session_cubit.dart';
 
-class SplashPage extends StatelessWidget {
+class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
+
+  @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+  bool _signingOut = false;
+
+  Future<void> _signOut() async {
+    if (_signingOut) return;
+    setState(() => _signingOut = true);
+
+    try {
+      await context.read<SessionCubit>().signOut();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not sign out. Try again.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _signingOut = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +36,12 @@ class SplashPage extends StatelessWidget {
         child: Center(
           child: BlocBuilder<SessionCubit, SessionState>(
             builder: (context, state) {
-              if (state is! SessionAuthFailure) {
+              final message = switch (state) {
+                SessionAuthFailure() => 'Could not check your session.',
+                SessionProfileFailure(:final message) => message,
+                _ => null,
+              };
+              if (message == null) {
                 return const CircularProgressIndicator(
                   semanticsLabel: 'Checking your session',
                 );
@@ -24,15 +53,22 @@ class SplashPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Could not check your session.',
+                      message,
                       style: Theme.of(context).textTheme.titleMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     FilledButton(
-                      onPressed: context.read<SessionCubit>().retry,
+                      onPressed: _signingOut
+                          ? null
+                          : context.read<SessionCubit>().retry,
                       child: const Text('Try again'),
                     ),
+                    if (state is SessionProfileFailure)
+                      TextButton(
+                        onPressed: _signingOut ? null : _signOut,
+                        child: Text(_signingOut ? 'Signing out…' : 'Sign out'),
+                      ),
                   ],
                 ),
               );

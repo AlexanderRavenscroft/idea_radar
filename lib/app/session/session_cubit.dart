@@ -30,6 +30,18 @@ class SessionCubit extends Cubit<SessionState> {
 
   Future<void> signOut() => _authRepository.signOut();
 
+  Future<void> saveProfile(String bio) async {
+    final setup = state;
+    if (isClosed || setup is! SessionProfileSetupRequired) return;
+
+    final user = setup.user;
+    final profile = await _profileRepository.saveBio(user.id, bio);
+
+    if (isClosed || !identical(state, setup)) return;
+
+    emit(SessionAuthenticated(user: user, profile: profile));
+  }
+
   Future<void> _loadSession(AuthUser? user) async {
     if (isClosed) return;
 
@@ -53,7 +65,6 @@ class SessionCubit extends Cubit<SessionState> {
           : error.runtimeType.toString();
       emit(
         SessionProfileFailure(
-          user: user,
           message: kDebugMode ? '$message ($errorCode)' : message,
         ),
       );
@@ -63,11 +74,8 @@ class SessionCubit extends Cubit<SessionState> {
     if (isClosed || !identical(_user, user)) return;
 
     emit(
-      profile == null
-          ? SessionProfileFailure(
-              user: user,
-              message: 'Your profile is missing.',
-            )
+      profile == null || profile.bio.isEmpty
+          ? SessionProfileSetupRequired(user: user)
           : SessionAuthenticated(user: user, profile: profile),
     );
   }

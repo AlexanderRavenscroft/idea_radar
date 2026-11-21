@@ -5,17 +5,19 @@ class ProfileRepository {
   final _client = Supabase.instance.client;
 
   Future<UserProfile?> getProfile(String userId) async {
-    final row = await _client
-        .from('profiles')
-        .select('id, full_name')
-        .eq('id', userId)
-        .maybeSingle();
-
-    if (row == null) return null;
-
-    return UserProfile(
-      id: row['id'] as String,
-      fullName: (row['full_name'] as String? ?? '').trim(),
+    final row = await _client.rpc<Map<String, dynamic>?>(
+      'get_own_profile',
+      params: {'profile_id': userId},
     );
+
+    return row == null ? null : UserProfile.fromRow(row);
+  }
+
+  Future<UserProfile> saveBio(String userId, String bio) async {
+    final row = await _client.rpc<Map<String, dynamic>>(
+      'save_profile_bio',
+      params: {'profile_id': userId, 'profile_bio': bio},
+    );
+    return UserProfile.fromRow(row);
   }
 }

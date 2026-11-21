@@ -13,7 +13,7 @@ final class LoginSubmitting extends LoginState {
 }
 
 final class LoginFailure extends LoginState {
-  const LoginFailure(this.message);
-
   final String message;
+
+  const LoginFailure(this.message);
 }

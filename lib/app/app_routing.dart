@@ -4,13 +4,23 @@ import 'package:idea_radar/app/main_shell.dart';
 import 'package:idea_radar/app/session/session_cubit.dart';
 import 'package:idea_radar/features/auth/pages/login_page.dart';
 import 'package:idea_radar/features/auth/pages/splash_page.dart';
+import 'package:idea_radar/features/profiles/pages/create_profile_page.dart';
 import 'package:idea_radar/features/profiles/pages/profile_page.dart';
 import 'package:idea_radar/pages/add_idea_page.dart';
 import 'package:idea_radar/pages/home_page.dart';
 import 'package:idea_radar/pages/placeholder_page.dart';
 import 'package:idea_radar/pages/search_idea_page.dart';
 
-enum AppRoute { splash, login, home, searchIdea, addIdea, placeholder, profile }
+enum AppRoute {
+  splash,
+  login,
+  createProfile,
+  home,
+  searchIdea,
+  addIdea,
+  placeholder,
+  profile,
+}
 
 GoRouter createAppRouter(SessionCubit sessionCubit) {
   return GoRouter(
@@ -27,6 +37,11 @@ GoRouter createAppRouter(SessionCubit sessionCubit) {
         path: '/login',
         name: AppRoute.login.name,
         builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+        path: '/create-profile',
+        name: AppRoute.createProfile.name,
+        builder: (context, state) => const CreateProfilePage(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -51,12 +66,17 @@ String? _redirectForSession(GoRouterState state, SessionState session) {
   final location = state.matchedLocation;
   final isOnSplash = location == state.namedLocation(AppRoute.splash.name);
   final isOnLogin = location == state.namedLocation(AppRoute.login.name);
+  final isOnCreateProfile =
+      location == state.namedLocation(AppRoute.createProfile.name);
 
   final destination = switch (session) {
-    SessionChecking() || SessionAuthFailure() => AppRoute.splash,
+    SessionChecking() ||
+    SessionAuthFailure() ||
+    SessionProfileFailure() => AppRoute.splash,
     SessionUnauthenticated() => AppRoute.login,
-    SessionProfileFailure() => AppRoute.profile,
-    SessionAuthenticated() => isOnSplash || isOnLogin ? AppRoute.home : null,
+    SessionProfileSetupRequired() => AppRoute.createProfile,
+    SessionAuthenticated() =>
+      isOnSplash || isOnLogin || isOnCreateProfile ? AppRoute.home : null,
   };
 
   if (destination == null) return null;

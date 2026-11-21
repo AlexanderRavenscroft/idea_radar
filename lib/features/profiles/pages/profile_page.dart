@@ -40,23 +40,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<SessionCubit, SessionState>(
       builder: (context, state) {
-        final (user, fullName, error) = switch (state) {
-          SessionAuthenticated(:final user, :final profile) => (
-            user,
-            profile.fullName,
-            null,
-          ),
-          SessionProfileFailure(:final user, :final message) => (
-            user,
-            '',
-            message,
-          ),
-          _ => (null, '', null),
-        };
+        if (state is! SessionAuthenticated) return const SizedBox.shrink();
 
-        if (user == null) return const SizedBox.shrink();
-
-        final email = user.email;
+        final email = state.user.email;
+        final fullName = state.profile.fullName;
+        final bio = state.profile.bio;
         return SafeArea(
           child: ListView(
             padding: const EdgeInsets.all(24),
@@ -69,19 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 4),
                 Text(email),
               ],
-              if (error != null) ...[
-                const SizedBox(height: 16),
-                Text(error),
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: TextButton(
-                    onPressed: _signingOut
-                        ? null
-                        : context.read<SessionCubit>().retry,
-                    child: const Text('Try again'),
-                  ),
-                ),
-              ],
+              if (bio.isNotEmpty) ...[const SizedBox(height: 16), Text(bio)],
               const SizedBox(height: 16),
               Align(
                 alignment: AlignmentDirectional.centerStart,

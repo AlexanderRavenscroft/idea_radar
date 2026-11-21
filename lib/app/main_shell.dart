@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class MainShell extends StatelessWidget {
-  const MainShell({super.key, required this.navigationShell});
-
   final StatefulNavigationShell navigationShell;
 
   static const _destinations = [
@@ -13,6 +11,8 @@ class MainShell extends StatelessWidget {
     (label: 'More', icon: Icons.more_horiz, accent: false),
     (label: 'Profile', icon: Icons.person_outline, accent: false),
   ];
+
+  const MainShell({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
