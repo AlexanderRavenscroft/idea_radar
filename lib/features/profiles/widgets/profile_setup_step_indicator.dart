@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:idea_radar/theme/app_sizes.dart';
+import 'package:idea_radar/theme/app_spacing.dart';
 
 class ProfileSetupStepIndicator extends StatelessWidget {
   final int step;
@@ -14,10 +16,10 @@ class ProfileSetupStepIndicator extends StatelessWidget {
         children: [
           for (var index = 1; index <= 2; index++)
             Padding(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(AppSpacing.xs),
               child: Icon(
                 index == step ? Icons.circle : Icons.circle_outlined,
-                size: 10,
+                size: AppSizes.stepIndicator,
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:idea_radar/app/session/session_cubit.dart';
 import 'package:idea_radar/features/profiles/widgets/profile_setup_step_indicator.dart';
+import 'package:idea_radar/theme/app_spacing.dart';
 
 class CreateProfilePage extends StatefulWidget {
   const CreateProfilePage({super.key});
@@ -85,7 +86,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -94,26 +95,22 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
               enabled: !_signingOut,
               textCapitalization: TextCapitalization.words,
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                labelText: 'Full name',
-                border: OutlineInputBorder(),
-              ),
+              decoration: const InputDecoration(labelText: 'Full name'),
               validator: (value) =>
                   (value ?? '').trim().isEmpty ? 'Enter your full name.' : null,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             TextFormField(
               controller: _bioController,
               enabled: !_signingOut,
               decoration: const InputDecoration(
                 labelText: 'Bio (optional)',
                 hintText: 'Tell us a little about yourself',
-                border: OutlineInputBorder(),
               ),
               minLines: 3,
               maxLines: 5,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
             FilledButton(
               onPressed: _signingOut ? null : _continue,
               child: const Text('Continue'),

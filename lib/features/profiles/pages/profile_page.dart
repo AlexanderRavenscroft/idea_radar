@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:idea_radar/app/session/session_cubit.dart';
+import 'package:idea_radar/theme/app_spacing.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -47,18 +48,21 @@ class _ProfilePageState extends State<ProfilePage> {
         final bio = state.profile.bio;
         return SafeArea(
           child: ListView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(AppSpacing.xl),
             children: [
               Text(
                 fullName.isEmpty ? 'Profile' : fullName,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               if (email != null && email.isNotEmpty) ...[
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 Text(email),
               ],
-              if (bio.isNotEmpty) ...[const SizedBox(height: 16), Text(bio)],
-              const SizedBox(height: 16),
+              if (bio.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.lg),
+                Text(bio),
+              ],
+              const SizedBox(height: AppSpacing.lg),
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: OutlinedButton(

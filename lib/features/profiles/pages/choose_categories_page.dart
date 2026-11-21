@@ -5,6 +5,7 @@ import 'package:idea_radar/features/profiles/profile_category.dart';
 import 'package:idea_radar/features/profiles/profile_repository.dart';
 import 'package:idea_radar/features/profiles/widgets/category_chip.dart';
 import 'package:idea_radar/features/profiles/widgets/profile_setup_step_indicator.dart';
+import 'package:idea_radar/theme/app_spacing.dart';
 
 class ChooseCategoriesPage extends StatefulWidget {
   const ChooseCategoriesPage({super.key});
@@ -111,7 +112,7 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
     final categories = snapshot.data;
     if (categories == null || categories.isEmpty) {
       return ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         children: [
           Text(
             snapshot.hasError
@@ -132,13 +133,13 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
     ]..sort();
 
     return ListView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       children: [
         const Text('Select one or more categories you’re interested in.'),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.md),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
           children: [
             for (final category in categories)
               CategoryChip(
@@ -150,7 +151,7 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
               ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.lg),
         FilledButton(
           onPressed: _saving || categoryIds.isEmpty
               ? null

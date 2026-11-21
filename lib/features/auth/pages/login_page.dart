@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:idea_radar/features/auth/auth_repository.dart';
 import 'package:idea_radar/features/auth/cubits/login/login_cubit.dart';
+import 'package:idea_radar/theme/app_sizes.dart';
+import 'package:idea_radar/theme/app_spacing.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -36,9 +38,11 @@ class _LoginView extends StatelessWidget {
           body: SafeArea(
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
+                  constraints: const BoxConstraints(
+                    maxWidth: AppSizes.loginButtonMaxWidth,
+                  ),
                   child: OutlinedButton(
                     onPressed: signingIn
                         ? null
@@ -47,18 +51,19 @@ class _LoginView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox.square(
-                          dimension: 24,
+                          dimension: AppSizes.icon,
                           child: signingIn
                               ? const Padding(
-                                  padding: EdgeInsets.all(3),
+                                  padding: EdgeInsets.all(AppSpacing.xs),
                                   child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+                                    strokeWidth:
+                                        AppSizes.loginProgressStrokeWidth,
                                     semanticsLabel: 'Signing in',
                                   ),
                                 )
                               : Image.asset('assets/icons/google.png'),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AppSpacing.md),
                         const Flexible(
                           child: Text(
                             'Continue with Google',

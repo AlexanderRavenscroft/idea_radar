@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:idea_radar/theme/app_radius.dart';
+import 'package:idea_radar/theme/app_sizes.dart';
+import 'package:idea_radar/theme/app_spacing.dart';
+import 'package:idea_radar/theme/app_theme.dart';
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -29,8 +33,6 @@ class MainShell extends StatelessWidget {
           border: Border(top: BorderSide(color: colors.outlineVariant)),
         ),
         child: BottomAppBar(
-          height: 72,
-          padding: EdgeInsets.zero,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -59,19 +61,22 @@ class MainShell extends StatelessWidget {
     final selected = navigationShell.currentIndex == index;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    const radius = BorderRadius.all(Radius.circular(12));
+    const radius = BorderRadius.all(Radius.circular(AppRadius.md));
     final iconColor = selected ? colors.primary : colors.onSurfaceVariant;
     final textColor = selected ? colors.onSurface : colors.onSurfaceVariant;
 
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.sm,
+        ),
         child: Semantics(
           label: accent ? label : null,
           button: true,
           selected: selected,
           child: Material(
-            color: Colors.transparent,
+            type: MaterialType.transparency,
             borderRadius: radius,
             child: InkWell(
               onTap: () =>
@@ -79,8 +84,8 @@ class MainShell extends StatelessWidget {
               borderRadius: radius,
               child: Center(
                 child: Ink(
-                  width: 56,
-                  height: 48,
+                  width: AppSizes.navigationItemWidth,
+                  height: AppSizes.navigationItemHeight,
                   decoration: accent
                       ? BoxDecoration(
                           color: colors.primaryContainer,
@@ -90,9 +95,9 @@ class MainShell extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(icon, size: 24, color: iconColor),
+                      Icon(icon, size: AppSizes.icon, color: iconColor),
                       if (!accent) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Flexible(
                           child: Text(
                             label,
@@ -101,8 +106,8 @@ class MainShell extends StatelessWidget {
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: textColor,
                               fontWeight: selected
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
+                                  ? AppTheme.selectedNavigationLabelWeight
+                                  : AppTheme.navigationLabelWeight,
                             ),
                           ),
                         ),

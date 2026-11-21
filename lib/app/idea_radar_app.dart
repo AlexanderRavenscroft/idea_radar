@@ -7,6 +7,7 @@ import 'package:idea_radar/app/app_routing.dart';
 import 'package:idea_radar/app/session/session_cubit.dart';
 import 'package:idea_radar/features/auth/auth_repository.dart';
 import 'package:idea_radar/features/profiles/profile_repository.dart';
+import 'package:idea_radar/theme/app_theme.dart';
 
 class IdeaRadarApp extends StatefulWidget {
   const IdeaRadarApp({super.key});
@@ -54,9 +55,7 @@ class _IdeaRadarAppState extends State<IdeaRadarApp> {
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'Idea Radar',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            ),
+            theme: AppTheme.dark,
             routerConfig: _router,
           ),
         ),
