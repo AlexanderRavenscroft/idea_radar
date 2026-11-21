@@ -12,10 +12,32 @@ final class SessionUnauthenticated extends SessionState {
   const SessionUnauthenticated();
 }
 
-final class SessionProfileSetupRequired extends SessionState {
+final class SessionSettingName extends SessionState {
   final AuthUser user;
+  final String fullName;
+  final String bio;
+  final Set<int> selectedCategoryIds;
 
-  const SessionProfileSetupRequired({required this.user});
+  const SessionSettingName({
+    required this.user,
+    this.fullName = '',
+    required this.bio,
+    this.selectedCategoryIds = const {},
+  });
+}
+
+final class SessionSettingCategories extends SessionState {
+  final AuthUser user;
+  final String fullName;
+  final String bio;
+  final Set<int> selectedCategoryIds;
+
+  const SessionSettingCategories({
+    required this.user,
+    required this.fullName,
+    required this.bio,
+    required this.selectedCategoryIds,
+  });
 }
 
 final class SessionAuthenticated extends SessionState {

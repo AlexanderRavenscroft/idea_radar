@@ -30,16 +30,47 @@ class SessionCubit extends Cubit<SessionState> {
 
   Future<void> signOut() => _authRepository.signOut();
 
-  Future<void> saveProfile(String bio) async {
+  void setProfileDetails({required String fullName, required String bio}) {
     final setup = state;
-    if (isClosed || setup is! SessionProfileSetupRequired) return;
+    if (isClosed || setup is! SessionSettingName) return;
 
-    final user = setup.user;
-    final profile = await _profileRepository.saveBio(user.id, bio);
+    emit(
+      SessionSettingCategories(
+        user: setup.user,
+        fullName: fullName,
+        bio: bio,
+        selectedCategoryIds: setup.selectedCategoryIds,
+      ),
+    );
+  }
+
+  void editProfileDetails(Set<int> selectedCategoryIds) {
+    final setup = state;
+    if (isClosed || setup is! SessionSettingCategories) return;
+
+    emit(
+      SessionSettingName(
+        user: setup.user,
+        fullName: setup.fullName,
+        bio: setup.bio,
+        selectedCategoryIds: Set<int>.unmodifiable(selectedCategoryIds),
+      ),
+    );
+  }
+
+  Future<void> saveProfile(List<int> categoryIds) async {
+    final setup = state;
+    if (isClosed || setup is! SessionSettingCategories) return;
+
+    final profile = await _profileRepository.saveProfile(
+      fullName: setup.fullName,
+      bio: setup.bio,
+      categoryIds: categoryIds,
+    );
 
     if (isClosed || !identical(state, setup)) return;
 
-    emit(SessionAuthenticated(user: user, profile: profile));
+    emit(SessionAuthenticated(user: setup.user, profile: profile));
   }
 
   Future<void> _loadSession(AuthUser? user) async {
@@ -55,7 +86,7 @@ class SessionCubit extends Cubit<SessionState> {
 
     final UserProfile? profile;
     try {
-      profile = await _profileRepository.getProfile(user.id);
+      profile = await _profileRepository.getProfile();
     } catch (error) {
       if (isClosed || !identical(_user, user)) return;
 
@@ -74,8 +105,10 @@ class SessionCubit extends Cubit<SessionState> {
     if (isClosed || !identical(_user, user)) return;
 
     emit(
-      profile == null || profile.bio.isEmpty
-          ? SessionProfileSetupRequired(user: user)
+      profile == null ||
+              profile.fullName.isEmpty ||
+              profile.selectedCategoryIds.isEmpty
+          ? SessionSettingName(user: user, bio: profile?.bio ?? '')
           : SessionAuthenticated(user: user, profile: profile),
     );
   }
