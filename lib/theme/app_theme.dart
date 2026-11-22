@@ -1,51 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:idea_radar/theme/app_colors.dart';
-import 'package:idea_radar/theme/app_radius.dart';
-import 'package:idea_radar/theme/app_spacing.dart';
 
 abstract final class AppTheme {
-  static const FontWeight navigationLabelWeight = FontWeight.w500;
-  static const FontWeight selectedNavigationLabelWeight = FontWeight.w700;
+  static const _colors = ColorScheme.dark(
+    primary: AppColors.primary,
+    onPrimary: AppColors.onPrimary,
+    primaryContainer: Color(0xff1D4034),
+    onPrimaryContainer: AppColors.primary,
+    secondary: AppColors.secondary,
+    onSecondary: AppColors.onSecondary,
+    secondaryContainer: Color(0xff323452),
+    onSecondaryContainer: Color(0xffE1DFFF),
+    surface: AppColors.surface,
+    surfaceContainer: AppColors.surfaceContainer,
+    surfaceContainerLow: AppColors.surfaceContainerLow,
+    surfaceContainerHigh: Color(0xff1F2F39),
+    onSurface: AppColors.onSurface,
+    onSurfaceVariant: AppColors.onSurfaceVariant,
+    outline: AppColors.outline,
+    outlineVariant: AppColors.outlineVariant,
+    error: AppColors.error,
+    onError: AppColors.onError,
+  );
 
   static final ThemeData dark = ThemeData(
-    brightness: Brightness.dark,
-    colorScheme: const ColorScheme.dark(
-      primary: AppColors.primary,
-      onPrimary: AppColors.onPrimary,
-      primaryContainer: AppColors.onPrimary,
-      onPrimaryContainer: AppColors.primary,
-      secondary: AppColors.secondary,
-      onSecondary: AppColors.onSecondary,
-      surface: AppColors.surface,
-      surfaceContainer: AppColors.surfaceContainer,
-      surfaceContainerLow: AppColors.surfaceContainerLow,
-      onSurface: AppColors.onSurface,
-      onSurfaceVariant: AppColors.onSurfaceVariant,
-      outline: AppColors.outline,
-      outlineVariant: AppColors.outlineVariant,
-      error: AppColors.error,
-      onError: AppColors.onError,
+    colorScheme: _colors,
+    scaffoldBackgroundColor: AppColors.surface,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.surface,
+      centerTitle: false,
+      scrolledUnderElevation: 0,
     ),
-    bottomAppBarTheme: const BottomAppBarThemeData(
-      height: 72,
-      padding: EdgeInsets.zero,
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: AppColors.surfaceContainerLow,
+      indicatorColor: _colors.primaryContainer,
+      elevation: 0,
+      height: 69,
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => TextStyle(
+          fontSize: 11,
+          fontWeight: states.contains(WidgetState.selected)
+              ? FontWeight.w700
+              : FontWeight.w500,
+          color: states.contains(WidgetState.selected)
+              ? _colors.primary
+              : _colors.onSurfaceVariant,
+        ),
+      ),
     ),
     inputDecorationTheme: const InputDecorationThemeData(
+      filled: true,
+      fillColor: AppColors.surfaceContainerLow,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(AppRadius.xs)),
+        borderRadius: BorderRadius.all(Radius.circular(14)),
+        borderSide: BorderSide(color: AppColors.outlineVariant),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(14)),
+        borderSide: BorderSide(color: AppColors.outlineVariant),
       ),
     ),
-    tooltipTheme: const TooltipThemeData(
-      preferBelow: false,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainer,
-        borderRadius: BorderRadius.all(Radius.circular(AppRadius.sm)),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(0, 50),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       ),
-      padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.sm,
-      ),
-      textStyle: TextStyle(color: AppColors.onSurface, fontSize: 12),
     ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(0, 48),
+        side: const BorderSide(color: AppColors.outlineVariant),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      ),
+    ),
+    snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating),
   );
 }

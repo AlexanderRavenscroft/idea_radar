@@ -54,7 +54,7 @@ class _IdeaRadarAppState extends State<IdeaRadarApp> {
           listener: (context, state) => _router.refresh(),
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
-            title: 'Idea Radar',
+            title: 'Radar Innowacji',
             theme: AppTheme.dark,
             routerConfig: _router,
           ),

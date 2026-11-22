@@ -53,7 +53,9 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not sign out. Try again.')),
+          const SnackBar(
+            content: Text('Nie udało się wylogować. Spróbuj ponownie.'),
+          ),
         );
       }
     } finally {
@@ -68,7 +70,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Create Profile'),
+          title: const Text('Utwórz profil'),
         ),
         body: SafeArea(
           child: Column(
@@ -95,17 +97,18 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
               enabled: !_signingOut,
               textCapitalization: TextCapitalization.words,
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(labelText: 'Full name'),
-              validator: (value) =>
-                  (value ?? '').trim().isEmpty ? 'Enter your full name.' : null,
+              decoration: const InputDecoration(labelText: 'Imię i nazwisko'),
+              validator: (value) => (value ?? '').trim().isEmpty
+                  ? 'Wpisz imię i nazwisko.'
+                  : null,
             ),
             const SizedBox(height: AppSpacing.lg),
             TextFormField(
               controller: _bioController,
               enabled: !_signingOut,
               decoration: const InputDecoration(
-                labelText: 'Bio (optional)',
-                hintText: 'Tell us a little about yourself',
+                labelText: 'O Tobie (opcjonalnie)',
+                hintText: 'Napisz, czym się zajmujesz',
               ),
               minLines: 3,
               maxLines: 5,
@@ -113,11 +116,11 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
             const SizedBox(height: AppSpacing.lg),
             FilledButton(
               onPressed: _signingOut ? null : _continue,
-              child: const Text('Continue'),
+              child: const Text('Dalej'),
             ),
             TextButton(
               onPressed: _signingOut ? null : _signOut,
-              child: const Text('Sign out'),
+              child: const Text('Wyloguj się'),
             ),
           ],
         ),

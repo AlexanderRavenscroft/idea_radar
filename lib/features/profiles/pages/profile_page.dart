@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:idea_radar/app/app_routing.dart';
 import 'package:idea_radar/app/session/session_cubit.dart';
-import 'package:idea_radar/theme/app_spacing.dart';
+import 'package:idea_radar/features/radar/radar_widgets.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -25,7 +27,9 @@ class _ProfilePageState extends State<ProfilePage> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not sign out. Try again.')),
+          const SnackBar(
+            content: Text('Nie udało się wylogować. Spróbuj ponownie.'),
+          ),
         );
       }
     } finally {
@@ -43,35 +47,77 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context, state) {
         if (state is! SessionAuthenticated) return const SizedBox.shrink();
 
+        final profile = state.profile;
         final email = state.user.email;
-        final fullName = state.profile.fullName;
-        final bio = state.profile.bio;
-        return SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            children: [
-              Text(
-                fullName.isEmpty ? 'Profile' : fullName,
-                style: Theme.of(context).textTheme.headlineSmall,
+        final theme = Theme.of(context);
+        final colors = theme.colorScheme;
+        return RadarList(
+          children: [
+            const RadarHeading('Twój profil'),
+            RadarPanel(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 26,
+                    backgroundColor: colors.primaryContainer,
+                    foregroundColor: colors.onPrimaryContainer,
+                    child: const Icon(Icons.person_outline),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    profile.fullName,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  if (email != null && email.isNotEmpty) Text(email),
+                  if (profile.bio.isNotEmpty) ...[
+                    const SizedBox(height: 11),
+                    Text(profile.bio),
+                  ],
+                ],
               ),
-              if (email != null && email.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Text(email),
-              ],
-              if (bio.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.lg),
-                Text(bio),
-              ],
-              const SizedBox(height: AppSpacing.lg),
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: OutlinedButton(
-                  onPressed: _signingOut ? null : _signOut,
-                  child: Text(_signingOut ? 'Signing out…' : 'Sign out'),
-                ),
+            ),
+            const SizedBox(height: 14),
+            RadarPanel(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.manage_accounts_outlined),
+                    title: const Text('Edytuj profil'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: _signingOut
+                        ? null
+                        : () => context.pushNamed<void>(
+                            AppRoute.editProfile.name,
+                          ),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.tune),
+                    title: const Text('Edytuj zainteresowania'),
+                    subtitle: Text(
+                      'Wybrane dziedziny: ${profile.selectedCategoryIds.length}',
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: _signingOut
+                        ? null
+                        : () => context.pushNamed<void>(
+                            AppRoute.editCategories.name,
+                          ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 14),
+            OutlinedButton.icon(
+              onPressed: _signingOut ? null : _signOut,
+              icon: const Icon(Icons.logout),
+              label: Text(_signingOut ? 'Wylogowywanie…' : 'Wyloguj się'),
+            ),
+          ],
         );
       },
     );

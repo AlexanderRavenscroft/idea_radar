@@ -6,6 +6,7 @@ import 'package:idea_radar/features/auth/auth_repository.dart';
 import 'package:idea_radar/features/auth/auth_user.dart';
 import 'package:idea_radar/features/profiles/profile_repository.dart';
 import 'package:idea_radar/features/profiles/user_profile.dart';
+import 'package:idea_radar/utils/app_logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 part 'session_state.dart';
@@ -62,15 +63,47 @@ class SessionCubit extends Cubit<SessionState> {
     final setup = state;
     if (isClosed || setup is! SessionSettingCategories) return;
 
-    final profile = await _profileRepository.saveProfile(
+    await _persistProfile(
+      user: setup.user,
       fullName: setup.fullName,
       bio: setup.bio,
       categoryIds: categoryIds,
     );
+  }
 
-    if (isClosed || !identical(state, setup)) return;
+  Future<bool> updateProfile({
+    String? fullName,
+    String? bio,
+    List<int>? categoryIds,
+  }) async {
+    final session = state;
+    if (isClosed || session is! SessionAuthenticated) return false;
 
-    emit(SessionAuthenticated(user: setup.user, profile: profile));
+    return _persistProfile(
+      user: session.user,
+      fullName: fullName ?? session.profile.fullName,
+      bio: bio ?? session.profile.bio,
+      categoryIds: categoryIds ?? session.profile.selectedCategoryIds,
+    );
+  }
+
+  Future<bool> _persistProfile({
+    required AuthUser user,
+    required String fullName,
+    required String bio,
+    required List<int> categoryIds,
+  }) async {
+    final session = state;
+    final profile = await _profileRepository.saveProfile(
+      fullName: fullName,
+      bio: bio,
+      categoryIds: categoryIds,
+    );
+
+    if (isClosed || !identical(state, session)) return false;
+
+    emit(SessionAuthenticated(user: user, profile: profile));
+    return true;
   }
 
   Future<void> _loadSession(AuthUser? user) async {
@@ -78,19 +111,21 @@ class SessionCubit extends Cubit<SessionState> {
 
     _user = user;
     if (user == null) {
+      log.d('[RADAR] auth.session state=signed_out');
       emit(const SessionUnauthenticated());
       return;
     }
 
+    log.d('[RADAR] auth.session state=signed_in');
     emit(const SessionChecking());
 
     final UserProfile? profile;
     try {
-      profile = await _profileRepository.getProfile();
+      profile = await logTimed('profile.load', _profileRepository.getProfile);
     } catch (error) {
       if (isClosed || !identical(_user, user)) return;
 
-      const message = 'Could not load your profile.';
+      const message = 'Nie udało się wczytać profilu.';
       final errorCode = error is PostgrestException
           ? error.code ?? 'PostgrestException'
           : error.runtimeType.toString();
@@ -108,12 +143,20 @@ class SessionCubit extends Cubit<SessionState> {
       profile == null ||
               profile.fullName.isEmpty ||
               profile.selectedCategoryIds.isEmpty
-          ? SessionSettingName(user: user, bio: profile?.bio ?? '')
+          ? SessionSettingName(
+              user: user,
+              fullName: profile?.fullName ?? '',
+              bio: profile?.bio ?? '',
+              selectedCategoryIds: Set<int>.unmodifiable(
+                profile?.selectedCategoryIds ?? [],
+              ),
+            )
           : SessionAuthenticated(user: user, profile: profile),
     );
   }
 
   void _onAuthError(Object error, StackTrace stackTrace) {
+    logFailure('auth.session', error, stackTrace);
     if (isClosed || _authRepository.currentUser != null) return;
 
     _user = null;

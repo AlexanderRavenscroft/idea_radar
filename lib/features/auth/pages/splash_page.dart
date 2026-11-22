@@ -22,7 +22,9 @@ class _SplashPageState extends State<SplashPage> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not sign out. Try again.')),
+          const SnackBar(
+            content: Text('Nie udało się wylogować. Spróbuj ponownie.'),
+          ),
         );
       }
     } finally {
@@ -38,13 +40,13 @@ class _SplashPageState extends State<SplashPage> {
           child: BlocBuilder<SessionCubit, SessionState>(
             builder: (context, state) {
               final message = switch (state) {
-                SessionAuthFailure() => 'Could not check your session.',
+                SessionAuthFailure() => 'Nie udało się sprawdzić sesji.',
                 SessionProfileFailure(:final message) => message,
                 _ => null,
               };
               if (message == null) {
                 return const CircularProgressIndicator(
-                  semanticsLabel: 'Checking your session',
+                  semanticsLabel: 'Sprawdzanie sesji',
                 );
               }
 
@@ -63,12 +65,14 @@ class _SplashPageState extends State<SplashPage> {
                       onPressed: _signingOut
                           ? null
                           : context.read<SessionCubit>().retry,
-                      child: const Text('Try again'),
+                      child: const Text('Spróbuj ponownie'),
                     ),
                     if (state is SessionProfileFailure)
                       TextButton(
                         onPressed: _signingOut ? null : _signOut,
-                        child: Text(_signingOut ? 'Signing out…' : 'Sign out'),
+                        child: Text(
+                          _signingOut ? 'Wylogowywanie…' : 'Wyloguj się',
+                        ),
                       ),
                   ],
                 ),

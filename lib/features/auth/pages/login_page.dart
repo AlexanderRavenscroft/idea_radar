@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:idea_radar/features/auth/auth_repository.dart';
 import 'package:idea_radar/features/auth/cubits/login/login_cubit.dart';
+import 'package:idea_radar/features/radar/radar_widgets.dart';
 import 'package:idea_radar/theme/app_radius.dart';
 import 'package:idea_radar/theme/app_sizes.dart';
 import 'package:idea_radar/theme/app_spacing.dart';
@@ -54,12 +55,19 @@ class _LoginView extends StatelessWidget {
                       children: [
                         Center(
                           child: Container(
-                            width: 320,
-                            height: 320,
+                            width: 220,
+                            height: 220,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: colors.primaryContainer,
                               borderRadius: BorderRadius.circular(AppRadius.xl),
+                            ),
+                            child: SizedBox.square(
+                              dimension: 185,
+                              child: RadarArtwork(
+                                color: colors.primary,
+                                compact: true,
+                              ),
                             ),
                           ),
                         ),
@@ -73,7 +81,7 @@ class _LoginView extends StatelessWidget {
                               Semantics(
                                 header: true,
                                 child: Text(
-                                  'Nazwa Aplikacji',
+                                  'Radar Innowacji',
                                   textAlign: TextAlign.center,
                                   style: theme.textTheme.headlineLarge
                                       ?.copyWith(fontWeight: FontWeight.w700),
@@ -81,7 +89,7 @@ class _LoginView extends StatelessWidget {
                               ),
                               const SizedBox(height: AppSpacing.md),
                               Text(
-                                'Przykładowy opis aplikacji.',
+                                'Odkrywaj pomysły z instytucji publicznych i skontaktuj się z ich autorami.',
                                 textAlign: TextAlign.center,
                                 style: theme.textTheme.bodyLarge?.copyWith(
                                   color: colors.onSurfaceVariant,

@@ -55,7 +55,7 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
           ..hideCurrentSnackBar()
           ..showSnackBar(
             const SnackBar(
-              content: Text('Could not save your profile. Try again.'),
+              content: Text('Nie udało się zapisać profilu. Spróbuj ponownie.'),
             ),
           );
       }
@@ -78,11 +78,11 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            tooltip: 'Back',
+            tooltip: 'Wróć',
             onPressed: _saving ? null : _back,
             icon: const BackButtonIcon(),
           ),
-          title: const Text('Choose Categories'),
+          title: const Text('Wybierz dziedziny'),
         ),
         body: SafeArea(
           child: Column(
@@ -116,12 +116,12 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
         children: [
           Text(
             snapshot.hasError
-                ? 'Could not load categories.'
-                : 'No categories are available.',
+                ? 'Nie udało się wczytać dziedzin.'
+                : 'Brak dostępnych dziedzin.',
           ),
           TextButton(
             onPressed: () => setState(() => _categories = null),
-            child: const Text('Retry'),
+            child: const Text('Spróbuj ponownie'),
           ),
         ],
       );
@@ -135,7 +135,9 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.xl),
       children: [
-        const Text('Select one or more categories you’re interested in.'),
+        const Text(
+          'Wybierz co najmniej jedną dziedzinę, która Cię interesuje.',
+        ),
         const SizedBox(height: AppSpacing.md),
         Wrap(
           spacing: AppSpacing.sm,
@@ -156,7 +158,7 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
           onPressed: _saving || categoryIds.isEmpty
               ? null
               : () => _save(categoryIds),
-          child: Text(_saving ? 'Saving…' : 'Save and continue'),
+          child: Text(_saving ? 'Zapisywanie…' : 'Zapisz i przejdź do radaru'),
         ),
       ],
     );
